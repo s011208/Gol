@@ -15,27 +15,36 @@ class MainActivityPresenter @Inject constructor(
     private val gameController: GameController
 ) {
 
-    private var radius = 1
-
     private val compositeDisposable = CompositeDisposable()
 
     private var gameViewGlobalLayoutDisposable: Disposable? = null
 
-    fun create() {
-        gameViewGlobalLayoutDisposable = view.gameViewLayoutIntent
-            .subscribe {
-                gameController.createGrid(it.first / radius, it.second / radius)
-                gameViewGlobalLayoutDisposable?.dispose()
-                gameViewGlobalLayoutDisposable = null
-            }
+    private var tempViewGlobalLayoutDisposable: Disposable? = null
 
-        compositeDisposable += view.gameViewTouchIntent
+    fun create() {
+        tempViewGlobalLayoutDisposable = view.tempViewLayoutIntent
             .subscribe {
-                if (it.action == MotionEvent.ACTION_MOVE || it.action == MotionEvent.ACTION_DOWN) {
-                    gameController.addLifeAt(it.x.toInt() / radius, it.y.toInt() / radius)
-                } else if (it.action == MotionEvent.ACTION_CANCEL || it.action == MotionEvent.ACTION_UP) {
-                    gameController.mergeLife()
-                }
+                view.render(State.InitGameView(it.first, it.second))
+
+                gameViewGlobalLayoutDisposable = view.gameViewLayoutIntent
+                    .subscribe { pair ->
+                        gameController.createGrid(pair.first, pair.second)
+
+                        compositeDisposable += view.gameViewTouchIntent
+                            .subscribe { motionEvent ->
+                                if (motionEvent.action == MotionEvent.ACTION_MOVE || motionEvent.action == MotionEvent.ACTION_DOWN) {
+                                    gameController.addLifeAt(motionEvent.x.toInt(), motionEvent.y.toInt())
+                                } else if (motionEvent.action == MotionEvent.ACTION_CANCEL || motionEvent.action == MotionEvent.ACTION_UP) {
+                                    gameController.mergeLife()
+                                }
+                            }
+
+                        gameViewGlobalLayoutDisposable?.dispose()
+                        gameViewGlobalLayoutDisposable = null
+                    }
+
+                tempViewGlobalLayoutDisposable?.dispose()
+                tempViewGlobalLayoutDisposable = null
             }
 
         compositeDisposable += gameController.updateIntent

@@ -1,7 +1,9 @@
 package yhh.com.gol.activity
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
+import android.widget.RelativeLayout
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxbinding3.view.clicks
@@ -9,9 +11,12 @@ import com.jakewharton.rxbinding3.view.globalLayouts
 import com.jakewharton.rxbinding3.view.touches
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 import yhh.com.gol.R
 import yhh.com.gol.activity.domain.State
+import yhh.com.gol.view.GameView
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,11 +28,15 @@ class MainActivity : AppCompatActivity() {
 
     internal lateinit var gameViewTouchIntent: Observable<MotionEvent>
 
+    internal lateinit var tempViewLayoutIntent: Observable<Pair<Int, Int>>
+
     internal lateinit var gameViewLayoutIntent: Observable<Pair<Int, Int>>
 
     internal lateinit var startIntent: Observable<Unit>
 
     internal lateinit var pauseIntent: Observable<Unit>
+
+    private var gameView: GameView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +49,51 @@ class MainActivity : AppCompatActivity() {
     fun render(state: State) {
         when (state) {
             is State.UpdateGameView -> {
-                gameView.update(state.bitmap)
+                gameView?.update(state.bitmap)
+            }
+            is State.InitGameView -> {
+                if (gameView != null) {
+                    container.removeView(gameView)
+                    gameView = null
+                }
+
+                gameView = GameView(this)
+                gameView?.apply {
+                    Timber.e("state.width: ${state.width}, state.height: ${state.height}")
+                    setBackgroundColor(Color.BLACK)
+                    val scale = 8f
+                    container.addView(
+                        gameView,
+                        RelativeLayout.LayoutParams(
+                            (state.width / scale).roundToInt(),
+                            (state.height / scale).roundToInt()
+                        )
+                    )
+
+                    pivotX = 0f
+                    pivotY = 0f
+
+                    scaleX = scale
+                    scaleY = scale
+
+                    gameViewTouchIntent =
+                        touches().filter {
+                            if (it.action == MotionEvent.ACTION_MOVE) return@filter it.x >= x && it.x <= x + width && it.y >= y && it.y <= y + height
+                            else return@filter true
+                        }
+                    gameViewLayoutIntent = globalLayouts().map { Pair(width, height) }
+                }
             }
         }
     }
 
     private fun initViews() {
-        gameViewTouchIntent = gameView.touches()
-        gameViewLayoutIntent = gameView.globalLayouts().map { Pair(gameView.width, gameView.height) }
+        gameView = GameView(this)
+            .apply {
+                setBackgroundColor(Color.BLACK)
+            }
+
+        tempViewLayoutIntent = tempView.globalLayouts().map { Pair(tempView.width, tempView.height) }
         startIntent = start.clicks()
         pauseIntent = pause.clicks()
     }
