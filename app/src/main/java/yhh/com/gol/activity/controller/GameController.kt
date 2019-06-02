@@ -1,5 +1,6 @@
 package yhh.com.gol.activity.controller
 
+import android.annotation.SuppressLint
 import android.graphics.*
 import android.os.Handler
 import android.os.HandlerThread
@@ -27,6 +28,8 @@ class GameController @Inject constructor() {
 
     private val tempNewLifeList = ArrayList<Point>()
 
+    private val backgroundNewLifeList = ArrayList<Point>()
+
     private lateinit var board: Array<IntArray>
 
     private lateinit var boardBitmap: Bitmap
@@ -47,22 +50,27 @@ class GameController @Inject constructor() {
         strokeWidth = 1f
     }
 
-    private val newLivePaint = Paint().apply {
-        style = Paint.Style.FILL
-        color = Color.MAGENTA
-        strokeWidth = 1f
-    }
-
     init {
         handlerThread.start()
         handler = Handler(handlerThread.looper)
     }
 
+    @SuppressLint("BinaryOperationInTimber")
     private fun calculate() {
         if (!updateIntent.hasObservers() || updateIntent.hasComplete()) {
             Timber.v("has observers: ${updateIntent.hasObservers()}, has completed: ${updateIntent.hasComplete()}")
             return
         }
+        var copyNewLifeListTime = System.currentTimeMillis()
+        synchronized(backgroundNewLifeList) {
+            if (backgroundNewLifeList.isNotEmpty()) {
+                backgroundNewLifeList.forEach {
+                    board[it.x][it.y] = 1
+                }
+                backgroundNewLifeList.clear()
+            }
+        }
+        copyNewLifeListTime = System.currentTimeMillis() - copyNewLifeListTime
         val timeSpend = System.currentTimeMillis()
         if (!::boardBitmap.isInitialized) {
             boardBitmap = Bitmap.createBitmap(board.size, board[0].size, Bitmap.Config.ARGB_8888)
@@ -108,11 +116,13 @@ class GameController @Inject constructor() {
                 }
             }
         }
-
-        val newLifeList = ArrayList(tempNewLifeList)
+        val newLifeList: ArrayList<Point>
+        synchronized(tempNewLifeList) {
+            newLifeList = ArrayList(tempNewLifeList)
+        }
         if (newLifeList.isNotEmpty()) {
             newLifeList.forEach {
-                canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), newLivePaint)
+                canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
             }
         }
 
@@ -121,9 +131,10 @@ class GameController @Inject constructor() {
         drawingTime = System.currentTimeMillis() - drawingTime
 
         Timber.v(
-            "total time spent: ${System.currentTimeMillis() - timeSpend}\n" +
-                    "conwayRuleTime spent: $conwayRuleTime\n" +
-                    "drawingTime spent: $drawingTime"
+            "total timeSpend: ${System.currentTimeMillis() - timeSpend}\n" +
+                    "conwayRuleTime: $conwayRuleTime\n" +
+                    "drawingTime: $drawingTime\n" +
+                    "copyNewLifeListTime: $copyNewLifeListTime"
         )
 
         handler.removeCallbacks(runnable)
@@ -151,7 +162,9 @@ class GameController @Inject constructor() {
 
     fun addLifeAt(x: Int, y: Int) {
         Timber.v("addLifeAt, x: $x, y: $y")
-        tempNewLifeList.add(Point(x, y))
+        synchronized(tempNewLifeList) {
+            tempNewLifeList.add(Point(x, y))
+        }
     }
 
     fun mergeLife() {
@@ -160,10 +173,13 @@ class GameController @Inject constructor() {
         if (!::board.isInitialized) {
             throw IllegalArgumentException("board needs be created first")
         }
-        tempNewLifeList.forEach {
-            board[it.x][it.y] = 1
+        // FIXME ??
+        synchronized(backgroundNewLifeList) {
+            synchronized(tempNewLifeList) {
+                backgroundNewLifeList.addAll(tempNewLifeList)
+                tempNewLifeList.clear()
+            }
         }
-        tempNewLifeList.clear()
     }
 
     fun start() {
