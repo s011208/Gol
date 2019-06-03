@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+            android:title="@string/activity_settings_category_title_debug_options">
+        <SwitchPreference
+                android:key="show_debug_panel"
+                android:title="@string/activity_settings_item_title_show_debug_panel"
+                android:defaultValue="false"
+        />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="@string/activity_settings_category_title_app_info">
+
+        <Preference
+                android:title="@string/activity_settings_item_title_app_version_name"
+                android:selectable="false"
+                android:key="version_name"/>
+        <Preference
+                android:title="@string/activity_settings_item_title_app_version_code"
+                android:selectable="false"
+                android:key="version_code"/>
+    </PreferenceCategory>
+</PreferenceScreen>

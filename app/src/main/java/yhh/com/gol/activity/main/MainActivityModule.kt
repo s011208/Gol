@@ -1,14 +1,14 @@
-package yhh.com.gol.activity
+package yhh.com.gol.activity.main
 
 import dagger.Module
 import dagger.Provides
-import yhh.com.gol.libs.dagger2.PerActiviy
+import yhh.com.gol.libs.dagger2.PerActivity
 
 @Module
 class MainActivityModule(private val view: MainActivity) {
 
     @Provides
-    @PerActiviy
+    @PerActivity
     fun provideView() = view
 
 }

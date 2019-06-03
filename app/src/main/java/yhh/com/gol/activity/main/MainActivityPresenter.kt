@@ -1,15 +1,15 @@
-package yhh.com.gol.activity
+package yhh.com.gol.activity.main
 
 import android.view.MotionEvent
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
-import yhh.com.gol.activity.controller.GameController
-import yhh.com.gol.activity.domain.State
-import yhh.com.gol.libs.dagger2.PerActiviy
+import yhh.com.gol.activity.main.controller.GameController
+import yhh.com.gol.activity.main.domain.State
+import yhh.com.gol.libs.dagger2.PerActivity
 import javax.inject.Inject
 
-@PerActiviy
+@PerActivity
 class MainActivityPresenter @Inject constructor(
     private val view: MainActivity,
     private val gameController: GameController
@@ -28,17 +28,19 @@ class MainActivityPresenter @Inject constructor(
 
                 gameViewGlobalLayoutDisposable = view.gameViewLayoutIntent
                     .subscribe { pair ->
-                        gameController.createGrid(pair.first, pair.second)
+                        fun initGameController(pair: Pair<Int, Int>) {
+                            gameController.createGrid(pair.first, pair.second)
 
-                        compositeDisposable += view.gameViewTouchIntent
-                            .subscribe { motionEvent ->
-                                if (motionEvent.action == MotionEvent.ACTION_MOVE || motionEvent.action == MotionEvent.ACTION_DOWN) {
-                                    gameController.addLifeAt(motionEvent.x.toInt(), motionEvent.y.toInt())
-                                } else if (motionEvent.action == MotionEvent.ACTION_CANCEL || motionEvent.action == MotionEvent.ACTION_UP) {
-                                    gameController.mergeLife()
+                            compositeDisposable += view.gameViewTouchIntent
+                                .subscribe { motionEvent ->
+                                    if (motionEvent.action == MotionEvent.ACTION_MOVE || motionEvent.action == MotionEvent.ACTION_DOWN) {
+                                        gameController.addLifeAt(motionEvent.x.toInt(), motionEvent.y.toInt())
+                                    } else if (motionEvent.action == MotionEvent.ACTION_CANCEL || motionEvent.action == MotionEvent.ACTION_UP) {
+                                        gameController.mergeLife()
+                                    }
                                 }
-                            }
-
+                        }
+                        initGameController(pair)
                         gameViewGlobalLayoutDisposable?.dispose()
                         gameViewGlobalLayoutDisposable = null
                     }
@@ -53,10 +55,20 @@ class MainActivityPresenter @Inject constructor(
             }
 
         compositeDisposable += view.startIntent
-            .subscribe { gameController.start() }
+            .subscribe { gameController.pause = false }
 
         compositeDisposable += view.pauseIntent
-            .subscribe { gameController.pause() }
+            .subscribe { gameController.pause = true }
+
+        compositeDisposable += view.onPauseIntent
+            .subscribe {
+                gameController.stopRendering()
+            }
+
+        compositeDisposable += view.onResumeIntent
+            .subscribe {
+                gameController.startRendering()
+            }
     }
 
     fun destroy() {

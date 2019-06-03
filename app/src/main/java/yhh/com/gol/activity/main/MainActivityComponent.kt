@@ -1,9 +1,9 @@
-package yhh.com.gol.activity
+package yhh.com.gol.activity.main
 
 import dagger.Component
-import yhh.com.gol.libs.dagger2.PerActiviy
+import yhh.com.gol.libs.dagger2.PerActivity
 
-@PerActiviy
+@PerActivity
 @Component(modules = [MainActivityModule::class])
 interface MainActivityComponent {
     fun inject(view: MainActivity)

@@ -1,4 +1,4 @@
-package yhh.com.gol.activity.domain
+package yhh.com.gol.activity.main.domain
 
 import android.graphics.Bitmap
 

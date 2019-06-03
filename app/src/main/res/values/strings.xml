@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Gol</string>
+
+    <string name="activity_settings_category_title_app_info">App info</string>
+    <string name="activity_settings_item_title_app_version_code">Version code</string>
+    <string name="activity_settings_item_title_app_version_name">Version name</string>
+    <string name="activity_settings_category_title_debug_options">Debug options</string>
+    <string name="activity_settings_item_title_show_debug_panel">Show debug panel</string>
 </resources>
