@@ -16,6 +16,7 @@ class SettingsFragmentModel @Inject constructor(
     }
 
     fun getVersionCode() = Single.fromCallable {
-        return@fromCallable packageManager.getPackageInfo(context.packageName, 0).longVersionCode
+        @Suppress("DEPRECATION")
+        return@fromCallable packageManager.getPackageInfo(context.packageName, 0).versionCode
     }
 }
