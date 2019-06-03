@@ -39,4 +39,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+    <ViewStub
+            android:layout_alignTop="@id/bottomMenu"
+            android:layout="@layout/view_debug_panel"
+            android:id="@+id/debugPanelViewStub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
 </RelativeLayout>

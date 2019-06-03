@@ -16,6 +16,8 @@ class GameController @Inject constructor() {
 
     internal val updateIntent = PublishSubject.create<Bitmap>()
 
+    internal val debugMessageIntent = PublishSubject.create<String>()
+
     private val conwayRule = ConwayRule()
 
     private val tempNewLifeList = ArrayList<Point>()
@@ -123,14 +125,7 @@ class GameController @Inject constructor() {
                 updateIntent.onNext(boardBitmap)
                 drawingTime = System.currentTimeMillis() - drawingTime
 
-                Timber
-                    .tag("time")
-                    .v(
-                        "total timeSpend: ${System.currentTimeMillis() - timeSpend}\n" +
-                                "conwayRuleTime: $conwayRuleTime\n" +
-                                "drawingTime: $drawingTime\n" +
-                                "copyNewLifeListTime: $copyNewLifeListTime"
-                    )
+                debugMessageIntent.onNext("total(${System.currentTimeMillis() - timeSpend}), logic($conwayRuleTime), drawing($drawingTime), copy($copyNewLifeListTime), update(${list.size})")
             }
         }
             .subscribeOn(Schedulers.io())
