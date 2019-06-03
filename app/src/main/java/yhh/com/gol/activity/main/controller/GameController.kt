@@ -8,17 +8,11 @@ import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 import javax.inject.Inject
 
-class GameController @Inject constructor() {
-
-    companion object {
-        private const val DRAW_BITMAP_STEP = 3000
-    }
+class GameController @Inject constructor(private val conwayRule: ConwayRule) {
 
     internal val updateIntent = PublishSubject.create<Bitmap>()
 
     internal val debugMessageIntent = PublishSubject.create<String>()
-
-    private val conwayRule = ConwayRule()
 
     private val tempNewLifeList = ArrayList<Point>()
 
@@ -84,30 +78,11 @@ class GameController @Inject constructor() {
                 var drawingTime = System.currentTimeMillis()
                 canvas.setBitmap(boardBitmap)
                 if (list.isNotEmpty()) {
-                    // FIXME Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x1493b3a4 in tid 1487 (GameController), pid 1462 (yhh.com.gol)
-                    if (list.size >= 20000 && false) {
-                        // normally it spends less than single thread when list.size > 20000 ?
-                        val completableList = ArrayList<Completable>()
-                        for (index in 0 until list.size step DRAW_BITMAP_STEP) {
-                            completableList.add(Completable.fromAction {
-                                val subList = list.subList(index, Math.min(index + DRAW_BITMAP_STEP, list.size))
-                                subList.forEach {
-                                    if (it.isAlive) {
-                                        canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
-                                    } else {
-                                        canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), diePaint)
-                                    }
-                                }
-                            }.subscribeOn(Schedulers.io()))
-                        }
-                        Completable.merge(completableList).blockingAwait()
-                    } else {
-                        list.forEach {
-                            if (it.isAlive) {
-                                canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
-                            } else {
-                                canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), diePaint)
-                            }
+                    list.forEach {
+                        if (it.isAlive) {
+                            canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
+                        } else {
+                            canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), diePaint)
                         }
                     }
                 }

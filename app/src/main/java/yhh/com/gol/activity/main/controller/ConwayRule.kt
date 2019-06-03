@@ -2,8 +2,9 @@ package yhh.com.gol.activity.main.controller
 
 import androidx.annotation.VisibleForTesting
 import timber.log.Timber
+import javax.inject.Inject
 
-class ConwayRule {
+class ConwayRule @Inject constructor() {
 
     companion object {
         private const val BORN = 3
