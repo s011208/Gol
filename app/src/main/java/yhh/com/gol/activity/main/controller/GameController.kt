@@ -125,7 +125,9 @@ class GameController @Inject constructor() {
                 updateIntent.onNext(boardBitmap)
                 drawingTime = System.currentTimeMillis() - drawingTime
 
-                debugMessageIntent.onNext("total(${System.currentTimeMillis() - timeSpend}), logic($conwayRuleTime), drawing($drawingTime), copy($copyNewLifeListTime), update(${list.size})")
+                if (list.isNotEmpty()) {
+                    debugMessageIntent.onNext("total(${System.currentTimeMillis() - timeSpend}), logic($conwayRuleTime), drawing($drawingTime), copy($copyNewLifeListTime), update(${list.size})")
+                }
             }
         }
             .subscribeOn(Schedulers.io())
