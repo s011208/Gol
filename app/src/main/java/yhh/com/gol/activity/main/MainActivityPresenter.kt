@@ -7,7 +7,8 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import yhh.com.gol.activity.main.controller.GameController
+import yhh.com.gol.activity.main.controller.v1.GameController
+import yhh.com.gol.activity.main.controller.v2.GameController2
 import yhh.com.gol.activity.main.domain.State
 import yhh.com.gol.libs.dagger2.PerActivity
 import javax.inject.Inject
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class MainActivityPresenter @Inject constructor(
     private val view: MainActivity,
     private val gameController: GameController,
+    private val gameController2: GameController2,
     private val model: MainActivityModel
 ) {
 
@@ -38,9 +40,11 @@ class MainActivityPresenter @Inject constructor(
                             compositeDisposable += view.gameViewTouchIntent
                                 .subscribe { motionEvent ->
                                     if (motionEvent.action == MotionEvent.ACTION_MOVE || motionEvent.action == MotionEvent.ACTION_DOWN) {
-                                        gameController.addLifeAt(motionEvent.x.toInt(), motionEvent.y.toInt())
+//                                        gameController.addLifeAt(motionEvent.x.toInt(), motionEvent.y.toInt())
+                                        gameController2.addGridPoint(motionEvent.x.toInt(), motionEvent.y.toInt())
                                     } else if (motionEvent.action == MotionEvent.ACTION_CANCEL || motionEvent.action == MotionEvent.ACTION_UP) {
-                                        gameController.mergeLife()
+//                                        gameController.mergeLife()
+                                        gameController2.mergeGridPoints()
                                     }
                                 }
                         }

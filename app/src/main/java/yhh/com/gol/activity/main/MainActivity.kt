@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.RelativeLayout
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
@@ -117,6 +118,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         gameView = GameView(this)
             .apply {
                 setBackgroundColor(Color.BLACK)
