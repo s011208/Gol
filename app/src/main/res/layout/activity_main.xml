@@ -33,9 +33,21 @@
                 android:text="pause"/>
     </LinearLayout>
 
+    <SeekBar
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:max="60"
+            android:progress="30"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/frameRateSeekBar"
+            android:layout_above="@id/bottomMenu"/>
+
     <View
             android:id="@+id/tempView"
-            android:layout_above="@id/bottomMenu"
+            android:layout_above="@id/frameRateSeekBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

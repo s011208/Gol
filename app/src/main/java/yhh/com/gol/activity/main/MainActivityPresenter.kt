@@ -7,7 +7,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import yhh.com.gol.activity.main.controller.v1.GameController
 import yhh.com.gol.activity.main.controller.v2.GameController2
 import yhh.com.gol.activity.main.domain.State
 import yhh.com.gol.libs.dagger2.PerActivity
@@ -64,24 +63,29 @@ class MainActivityPresenter @Inject constructor(
 
         compositeDisposable += view.startIntent
             .subscribe {
-//                gameController.pause = false
+                //                gameController.pause = false
                 gameController2.resume()
             }
 
         compositeDisposable += view.pauseIntent
             .subscribe {
-//                gameController.pause = true
+                //                gameController.pause = true
                 gameController2.pause()
             }
 
         compositeDisposable += view.onPauseIntent
             .subscribe {
-//                gameController.stopRendering()
+                //                gameController.stopRendering()
+                gameController2.sleep()
             }
+
+        compositeDisposable += view.seekBarChangeIntent
+            .subscribe { gameController2.setFrameRate(it) }
 
         compositeDisposable += view.onResumeIntent
             .subscribe {
-//                gameController.startRendering()
+                //                gameController.startRendering()
+                gameController2.awake()
 
                 model.checkDebugView()
                     .subscribeOn(Schedulers.io())

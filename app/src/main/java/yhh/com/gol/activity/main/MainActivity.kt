@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.view.globalLayouts
 import com.jakewharton.rxbinding3.view.touches
+import com.jakewharton.rxbinding3.widget.changes
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
@@ -30,6 +31,8 @@ class MainActivity : AppCompatActivity() {
 
     @VisibleForTesting
     internal var component: MainActivityComponent? = null
+
+    internal lateinit var seekBarChangeIntent: Observable<Int>
 
     internal lateinit var gameViewTouchIntent: Observable<MotionEvent>
 
@@ -70,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 gameView?.apply {
                     Timber.e("width: ${state.width}, height: ${state.height}")
                     setBackgroundColor(Color.BLACK)
-                    val scale = 8f
+                    val scale = 6f
                     container.addView(
                         gameView,
                         RelativeLayout.LayoutParams(
@@ -127,6 +130,7 @@ class MainActivity : AppCompatActivity() {
         tempViewLayoutIntent = tempView.globalLayouts().map { Pair(tempView.width, tempView.height) }
         startIntent = start.clicks()
         pauseIntent = pause.clicks()
+        seekBarChangeIntent = frameRateSeekBar.changes().skipInitialValue()
     }
 
     private fun initInjections() {

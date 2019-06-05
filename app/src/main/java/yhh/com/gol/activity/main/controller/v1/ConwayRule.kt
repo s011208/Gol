@@ -12,8 +12,12 @@ class ConwayRule @Inject constructor() {
         private const val SURVIVE_BOTTOM = 2
     }
 
+    private var runningTimes = 0L
+    private var totalTimes = 0L
+
     fun generateChangedLifeList(board: Array<IntArray>): ArrayList<GamePoint> {
         if (board.isEmpty()) return ArrayList()
+        val time = System.currentTimeMillis()
         val rtn = ArrayList<GamePoint>()
 
         val algorithmTime = System.currentTimeMillis()
@@ -35,12 +39,12 @@ class ConwayRule @Inject constructor() {
         }
         Timber.v("algorithmTime: ${System.currentTimeMillis() - algorithmTime}")
 
-        val updateBoardTime = System.currentTimeMillis()
         rtn.forEach {
             board[it.x][it.y] = if (it.isAlive) 1 else 0
         }
-        Timber.v("updateBoardTime: ${System.currentTimeMillis() - updateBoardTime}, list size: ${rtn.size}")
-
+        ++runningTimes
+        totalTimes += System.currentTimeMillis() - time
+        Timber.v("result size: ${rtn.size}, average time: ${totalTimes / runningTimes}")
         return rtn
     }
 
