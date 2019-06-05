@@ -16,7 +16,7 @@ import javax.inject.Inject
 @PerActivity
 class MainActivityPresenter @Inject constructor(
     private val view: MainActivity,
-    private val gameController: GameController,
+//    private val gameController: GameController,
     private val gameController2: GameController2,
     private val model: MainActivityModel
 ) {
@@ -35,8 +35,8 @@ class MainActivityPresenter @Inject constructor(
                 gameViewGlobalLayoutDisposable = view.gameViewLayoutIntent
                     .subscribe { pair ->
                         fun initGameController(pair: Pair<Int, Int>) {
-                            gameController.createGrid(pair.first, pair.second)
-
+//                            gameController.createGrid(pair.first, pair.second)
+                            gameController2.createBoard(pair.first, pair.second)
                             compositeDisposable += view.gameViewTouchIntent
                                 .subscribe { motionEvent ->
                                     if (motionEvent.action == MotionEvent.ACTION_MOVE || motionEvent.action == MotionEvent.ACTION_DOWN) {
@@ -57,25 +57,31 @@ class MainActivityPresenter @Inject constructor(
                 tempViewGlobalLayoutDisposable = null
             }
 
-        compositeDisposable += gameController.updateIntent
+        compositeDisposable += gameController2.updateIntent
             .subscribe {
                 view.render(State.UpdateGameView(it))
             }
 
         compositeDisposable += view.startIntent
-            .subscribe { gameController.pause = false }
+            .subscribe {
+//                gameController.pause = false
+                gameController2.resume()
+            }
 
         compositeDisposable += view.pauseIntent
-            .subscribe { gameController.pause = true }
+            .subscribe {
+//                gameController.pause = true
+                gameController2.pause()
+            }
 
         compositeDisposable += view.onPauseIntent
             .subscribe {
-                gameController.stopRendering()
+//                gameController.stopRendering()
             }
 
         compositeDisposable += view.onResumeIntent
             .subscribe {
-                gameController.startRendering()
+//                gameController.startRendering()
 
                 model.checkDebugView()
                     .subscribeOn(Schedulers.io())
@@ -95,9 +101,9 @@ class MainActivityPresenter @Inject constructor(
                     )
             }
 
-        compositeDisposable += gameController.debugMessageIntent
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { view.render(State.UpdateDebugMessage(it)) }
+//        compositeDisposable += gameController.debugMessageIntent
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe { view.render(State.UpdateDebugMessage(it)) }
     }
 
     fun destroy() {

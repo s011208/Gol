@@ -16,9 +16,13 @@ class GameController2 @Inject constructor(conwayRule: ConwayRule) {
 
     private val handler: MessageHandler
 
+    private val gameRunner = GameRunner(conwayRule)
+
+    internal val updateIntent = gameRunner.updateIntent
+
     init {
         handlerThread.start()
-        handler = MessageHandler(handlerThread.looper, conwayRule)
+        handler = MessageHandler(handlerThread.looper, gameRunner)
     }
 
     fun mergeGridPoints() {
@@ -57,18 +61,34 @@ class GameController2 @Inject constructor(conwayRule: ConwayRule) {
             }
         )
     }
+
+    fun pause() {
+        handler.sendMessage(Message.obtain()
+            .also {
+                it.what = MessageHandler.MSG_GAME_PAUSE
+            }
+        )
+    }
+
+    fun resume() {
+        handler.sendMessage(Message.obtain()
+            .also {
+                it.what = MessageHandler.MSG_GAME_RESUME
+            }
+        )
+    }
 }
 
-private class MessageHandler(looper: Looper, conwayRule: ConwayRule) : Handler(looper) {
+private class MessageHandler(looper: Looper, private val gameRunner: GameRunner) : Handler(looper) {
 
     companion object {
         const val MSG_ADD_GRID_POINT = 0
         const val MSG_MERGE = 1
         const val MSG_SET_FRAME_RATE = 2
         const val MSG_CREATE_BOARD = 3
+        const val MSG_GAME_PAUSE = 4
+        const val MSG_GAME_RESUME = 5
     }
-
-    private val gameRunner = GameRunner(conwayRule)
 
     init {
         gameRunner.start()
@@ -90,21 +110,31 @@ private class MessageHandler(looper: Looper, conwayRule: ConwayRule) : Handler(l
             MSG_CREATE_BOARD -> {
                 gameRunner.createBoard(msg.arg1, msg.arg2)
             }
+            MSG_GAME_RESUME -> {
+                gameRunner.resumeGame()
+            }
+            MSG_GAME_PAUSE -> {
+                gameRunner.pauseGame()
+            }
         }
     }
 }
 
 private class GameRunner(private val conwayRule: ConwayRule) : Thread() {
+    // sync members
     private val newPointList = ArrayList<Point>()
 
     private var canMergeNewPointList = false
 
-    private var frameRate = 60
+    private var frameRate = 30
 
     private var newBoardWidth = -1
 
     private var newBoardHeight = -1
 
+    private var pause = false
+
+    // normal members
     private lateinit var board: Array<IntArray>
 
     internal val updateIntent = PublishSubject.create<Bitmap>()
@@ -133,7 +163,8 @@ private class GameRunner(private val conwayRule: ConwayRule) : Thread() {
             newPointList: ArrayList<Point>,
             canMergeNewPointList: Boolean,
             newBoardWidth: Int,
-            newBoardHeight: Int
+            newBoardHeight: Int,
+            pause: Boolean
         ) {
             Timber.w("calculate")
 
@@ -141,14 +172,52 @@ private class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                 if (!::board.isInitialized || board.size != newBoardWidth || board[0].size != newBoardHeight) {
                     Timber.i("create new board with w: $newBoardWidth, h: $newBoardHeight")
                     board = Array(newBoardWidth) { IntArray(newBoardHeight) }
+                    if (::boardBitmap.isInitialized) {
+                        boardBitmap.recycle()
+                    }
+                    Timber.i("create new bitmap")
+                    boardBitmap = Bitmap.createBitmap(board.size, board[0].size, Bitmap.Config.ARGB_8888)
                 }
+            }
+
+            if (::board.isInitialized) {
+
+                if (canMergeNewPointList) {
+                    newPointList.forEach {
+                        board[it.x][it.y] = 1
+                    }
+                    newPointList.clear()
+                }
+
+                val gameResult =
+                    if (!pause) {
+                        conwayRule.generateChangedLifeList(board)
+                    } else {
+                        ArrayList()
+                    }
+
+                canvas.setBitmap(boardBitmap)
+
+                gameResult.forEach {
+                    if (it.isAlive) {
+                        canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
+                    } else {
+                        canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), diePaint)
+                    }
+                }
+
+                newPointList.forEach {
+                    canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
+                }
+                canvas.setBitmap(null)
+                updateIntent.onNext(boardBitmap)
             }
         }
 
         while (true) {
-            if (updateIntent.hasComplete() || !updateIntent.hasObservers()) {
-                Timber.v("updateIntent.hasComplete(): ${updateIntent.hasComplete()}, updateIntent.hasObservers(): ${updateIntent.hasObservers()}, ignore")
-                sleep(1000L / frameRate)
+            if (!updateIntent.hasObservers()) {
+                Timber.v("updateIntent.hasObservers(): ${updateIntent.hasObservers()}, ignore")
+                sleep(1000L)
                 continue
             }
 
@@ -157,6 +226,10 @@ private class GameRunner(private val conwayRule: ConwayRule) : Thread() {
             val canMergeNewPointList: Boolean
             val newBoardWidth: Int
             val newBoardHeight: Int
+            val pause: Boolean
+
+            val startTime = System.currentTimeMillis()
+
             synchronized(this) {
                 Timber.i("prepare to synchronized")
 
@@ -165,6 +238,7 @@ private class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                 newPointList.addAll(this.newPointList)
                 newBoardWidth = this.newBoardWidth
                 newBoardHeight = this.newBoardHeight
+                pause = this.pause
 
                 if (canMergeNewPointList) {
                     this.newPointList.clear()
@@ -172,9 +246,16 @@ private class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                 }
             }
 
-            calculate(newPointList, canMergeNewPointList, newBoardWidth, newBoardHeight)
+            calculate(newPointList, canMergeNewPointList, newBoardWidth, newBoardHeight, pause)
 
-            sleep(1000)
+            val timeSpent = System.currentTimeMillis() - startTime
+            val expectTime = 1000 / frameRate
+
+            Timber.v("timeSpent: $timeSpent")
+            if (timeSpent < expectTime) {
+                Timber.v("sleep ${expectTime - timeSpent}")
+                sleep(expectTime - timeSpent)
+            }
         }
     }
 
@@ -202,6 +283,16 @@ private class GameRunner(private val conwayRule: ConwayRule) : Thread() {
             newBoardHeight = height
         }
     }
-}
 
-//private data class GridPoint(val x: Int, val y: Int, var times: Int = 0, var isAlive: Boolean)
+    fun pauseGame() {
+        synchronized(this) {
+            pause = true
+        }
+    }
+
+    fun resumeGame() {
+        synchronized(this) {
+            pause = false
+        }
+    }
+}
