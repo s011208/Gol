@@ -1,6 +1,7 @@
 package yhh.com.gol.activity.main
 
 import android.view.MotionEvent
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
@@ -49,6 +50,7 @@ class MainActivityPresenter @Inject constructor(
             }
 
         compositeDisposable += gameController.updateIntent
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 view.render(State.UpdateGameView(it))
             }
@@ -68,12 +70,22 @@ class MainActivityPresenter @Inject constructor(
                 gameController.sleep()
             }
 
-        compositeDisposable += view.seekBarChangeIntent
+        compositeDisposable += view.frameRateChangeIntent
             .subscribe { gameController.setFrameRate(it) }
 
         compositeDisposable += view.onResumeIntent
             .subscribe {
                 gameController.awake()
+            }
+
+        compositeDisposable += view.scaleChangeIntent
+            .subscribe {
+                view.render(State.ScaleGameView(it))
+            }
+
+        compositeDisposable += view.randomAddIntent
+            .subscribe {
+                gameController.randomAdd()
             }
     }
 

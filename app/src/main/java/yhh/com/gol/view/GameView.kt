@@ -13,6 +13,7 @@ class GameView @JvmOverloads constructor(context: Context, attrs: AttributeSet? 
     private var drawingBitmap: Bitmap? = null
 
     fun update(bitmap: Bitmap) {
+        drawingBitmap?.recycle()
         drawingBitmap = bitmap
         invalidate()
     }

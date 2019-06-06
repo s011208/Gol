@@ -17,6 +17,7 @@ class MessageHandler(looper: Looper, private val gameRunner: GameRunner) : Handl
         const val MSG_GAME_SLEEP = 6
         const val MSG_GAME_AWAKE = 7
         const val MSG_GAME_FINISH = 8
+        const val MSG_RANDOM_ADD = 9
     }
 
     init {
@@ -53,6 +54,9 @@ class MessageHandler(looper: Looper, private val gameRunner: GameRunner) : Handl
             }
             MSG_GAME_FINISH -> {
                 gameRunner.finishGame()
+            }
+            MSG_RANDOM_ADD -> {
+                gameRunner.randomAdd()
             }
         }
     }

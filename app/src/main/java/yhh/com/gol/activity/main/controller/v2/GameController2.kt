@@ -96,4 +96,12 @@ class GameController2 @Inject constructor(conwayRule: ConwayRule) {
             }
         )
     }
+
+    fun randomAdd() {
+        handler.sendMessage(Message.obtain()
+            .also {
+                it.what = MessageHandler.MSG_RANDOM_ADD
+            }
+        )
+    }
 }
