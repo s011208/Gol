@@ -95,6 +95,7 @@ class GameController2 @Inject constructor(conwayRule: ConwayRule) {
                 it.what = MessageHandler.MSG_GAME_FINISH
             }
         )
+        handlerThread.quitSafely()
     }
 
     fun randomAdd() {

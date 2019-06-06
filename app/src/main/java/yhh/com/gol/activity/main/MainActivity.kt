@@ -132,10 +132,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViews() {
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        gameView = GameView(this)
-            .apply {
-                setBackgroundColor(Color.BLACK)
-            }
 
         tempViewLayoutIntent = tempView.globalLayouts().map { Pair(tempView.width, tempView.height) }
         startIntent = start.clicks()
