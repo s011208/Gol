@@ -1,12 +1,9 @@
 package yhh.com.gol.activity.main
 
 import android.view.MotionEvent
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import yhh.com.gol.activity.main.controller.v2.GameController2
 import yhh.com.gol.activity.main.domain.State
 import yhh.com.gol.libs.dagger2.PerActivity
@@ -15,8 +12,7 @@ import javax.inject.Inject
 @PerActivity
 class MainActivityPresenter @Inject constructor(
     private val view: MainActivity,
-    private val gameController: GameController2,
-    private val model: MainActivityModel
+    private val gameController: GameController2
 ) {
 
     private val compositeDisposable = CompositeDisposable()
@@ -78,32 +74,7 @@ class MainActivityPresenter @Inject constructor(
         compositeDisposable += view.onResumeIntent
             .subscribe {
                 gameController.awake()
-
-                fun updateDebugViewVisibility() {
-                    model.checkDebugView()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                            { showDebugPanel ->
-                                Timber.v("showDebugPanel: $showDebugPanel")
-                                if (showDebugPanel) {
-                                    view.render(State.ShowDebugPanel)
-                                } else {
-                                    view.render(State.HideDebugPanel)
-                                }
-                            },
-                            {
-                                Timber.w(it, "failed to check debug panel visibility")
-                            }
-                        )
-                }
-
-                updateDebugViewVisibility()
             }
-
-        compositeDisposable += gameController.logIntent
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { view.render(State.UpdateDebugMessage(it)) }
     }
 
     fun destroy() {

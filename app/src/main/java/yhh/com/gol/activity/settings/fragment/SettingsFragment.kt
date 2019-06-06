@@ -10,7 +10,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     companion object {
         const val KEY_VERSION_NAME = "version_name"
         const val KEY_VERSION_CODE = "version_code"
-        const val KEY_SHOW_DEBUG_PANEL = "show_debug_panel"
     }
 
     @field:[Inject]

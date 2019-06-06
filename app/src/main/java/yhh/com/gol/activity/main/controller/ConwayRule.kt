@@ -1,7 +1,6 @@
 package yhh.com.gol.activity.main.controller
 
 import androidx.annotation.VisibleForTesting
-import timber.log.Timber
 import javax.inject.Inject
 
 class ConwayRule @Inject constructor() {
@@ -12,15 +11,11 @@ class ConwayRule @Inject constructor() {
         private const val SURVIVE_BOTTOM = 2
     }
 
-    private var runningTimes = 0L
-    private var totalTimes = 0L
-
     fun generateChangedLifeList(board: Array<IntArray>): ArrayList<GamePoint> {
         if (board.isEmpty()) return ArrayList()
         val time = System.currentTimeMillis()
         val rtn = ArrayList<GamePoint>()
 
-        val algorithmTime = System.currentTimeMillis()
         for (row in 0 until board.size) {
             for (column in 0 until board[row].size) {
                 val neighbors = countNeighbor(board, row, column)
@@ -37,14 +32,10 @@ class ConwayRule @Inject constructor() {
                 }
             }
         }
-        Timber.v("algorithmTime: ${System.currentTimeMillis() - algorithmTime}")
 
         rtn.forEach {
             board[it.x][it.y] = if (it.isAlive) 1 else 0
         }
-        ++runningTimes
-        totalTimes += System.currentTimeMillis() - time
-        Timber.v("result size: ${rtn.size}, average time: ${totalTimes / runningTimes}")
         return rtn
     }
 

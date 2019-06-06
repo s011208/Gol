@@ -35,8 +35,6 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
 
     internal val updateIntent = PublishSubject.create<Bitmap>()
 
-    internal val logIntent = PublishSubject.create<String>()
-
     private lateinit var boardBitmap: Bitmap
 
     private val canvas = Canvas()
@@ -101,7 +99,6 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
 
             // init function variable
             synchronized(this) {
-                Timber.v("prepare to synchronized")
 
                 frameRate = this.frameRate
                 canMergeNewPointList = this.canMergeNewPointList
@@ -122,7 +119,6 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
             }
             synchronizedTime = System.currentTimeMillis() - synchronizedTime
 
-            Timber.v("prepare to render")
             createBoardTime = System.currentTimeMillis()
             // create board if need
             if (newBoardHeight > 0 && newBoardWidth > 0) {
@@ -186,11 +182,8 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                 updateIntent.onNext(boardBitmap)
             }
 
-            Timber.v("finish render")
-
             totalTime = System.currentTimeMillis() - totalTime
             remainingFrameTime -= totalTime
-            logIntent.onNext("total($totalTime), calculate($conwayCalculateTime), draw($drawingTime), nextDraw($remainingFrameTime), sync($synchronizedTime), create($createBoardTime), copy($copyNewPointTime), ")
         }
 
         Timber.i("Game finished")

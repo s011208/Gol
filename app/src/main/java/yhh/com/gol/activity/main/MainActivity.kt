@@ -3,7 +3,6 @@ package yhh.com.gol.activity.main
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.RelativeLayout
@@ -16,14 +15,12 @@ import com.jakewharton.rxbinding3.widget.changes
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.view_debug_panel.*
 import timber.log.Timber
 import yhh.com.gol.R
 import yhh.com.gol.activity.main.domain.State
 import yhh.com.gol.view.GameView
 import javax.inject.Inject
 import kotlin.math.roundToInt
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -73,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
                 gameView = GameView(this)
                 gameView?.apply {
-                    Timber.e("width: ${state.width}, height: ${state.height}")
+                    Timber.v("width: ${state.width}, height: ${state.height}")
                     setBackgroundColor(Color.BLACK)
                     val scale = 6f
                     container.addView(
@@ -99,25 +96,6 @@ class MainActivity : AppCompatActivity() {
 
                     (tempView.parent as ViewGroup).removeView(tempView)
                 }
-            }
-            is State.ShowDebugPanel -> {
-                if (debugPanelViewStub != null && debugPanelViewStub.parent != null) {
-                    debugPanelViewStub.inflate()
-                }
-                debugPanelContainer.visibility = View.VISIBLE
-            }
-            is State.HideDebugPanel -> {
-                if (debugPanelViewStub != null && debugPanelViewStub.parent != null) {
-                    return
-                }
-                debugPanelContainer.visibility = View.INVISIBLE
-            }
-            is State.UpdateDebugMessage -> {
-                if (debugPanelViewStub != null && debugPanelViewStub.parent != null) {
-                    return
-                }
-                if (debugPanelContainer.visibility == View.INVISIBLE) return
-                debugMessage.text = state.message
             }
         }
     }

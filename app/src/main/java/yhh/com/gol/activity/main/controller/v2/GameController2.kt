@@ -15,8 +15,6 @@ class GameController2 @Inject constructor(conwayRule: ConwayRule) {
 
     internal val updateIntent = gameRunner.updateIntent
 
-    internal val logIntent = gameRunner.logIntent
-
     init {
         handlerThread.start()
         handler = MessageHandler(handlerThread.looper, gameRunner)
