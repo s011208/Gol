@@ -18,7 +18,7 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
     }
 
     // sync members
-    private val newPointList = ArrayList<Point>()
+    private val newPointList = HashSet<Point>()
 
     private var canMergeNewPointList = false
 
@@ -253,7 +253,7 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
         val localHeight = newBoardHeight
         Thread(
             Runnable {
-                val result = ArrayList<Point>()
+                val result = HashSet<Point>()
                 for (x in 0 until localWidth) {
                     for (y in 0 until localHeight) {
                         if ((Math.random() * 10000).toInt() % 3 == 0) {
