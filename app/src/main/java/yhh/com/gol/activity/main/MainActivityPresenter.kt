@@ -1,7 +1,6 @@
 package yhh.com.gol.activity.main
 
 import android.view.MotionEvent
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -47,6 +46,35 @@ class MainActivityPresenter @Inject constructor(
                             }
                         gameViewGlobalLayoutDisposable?.dispose()
                         gameViewGlobalLayoutDisposable = null
+
+                        compositeDisposable += Single.fromCallable {
+                            return@fromCallable Pair(
+                                sharedPreferenceHelper.getFrameRate(),
+                                sharedPreferenceHelper.getScaleValue()
+                            )
+                        }
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(
+                                { savedValues ->
+                                    view.render(State.UpdateDefaultValue(savedValues.first, savedValues.second))
+
+                                    compositeDisposable += view.frameRateChangeIntent
+                                        .subscribe { frameRate ->
+                                            gameController.setFrameRate(frameRate)
+                                            sharedPreferenceHelper.setFrameRate(frameRate)
+                                        }
+
+                                    compositeDisposable += view.scaleChangeIntent
+                                        .subscribe { scale ->
+                                            view.render(State.ScaleGameView(scale))
+                                            sharedPreferenceHelper.setScaleValue(scale - MainActivity.BASE_SCALE.toInt())
+                                        }
+                                },
+                                { savedValueThrowable ->
+                                    Timber.w(savedValueThrowable, "failed to init default value")
+                                }
+                            )
                     }
 
                 tempViewGlobalLayoutDisposable?.dispose()
@@ -88,32 +116,6 @@ class MainActivityPresenter @Inject constructor(
             .subscribe {
                 gameController.clear()
             }
-
-        compositeDisposable += Single.fromCallable {
-            return@fromCallable Pair(sharedPreferenceHelper.getFrameRate(), sharedPreferenceHelper.getScaleValue())
-        }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    view.render(State.UpdateDefaultValue(it.first, it.second))
-
-                    compositeDisposable += view.frameRateChangeIntent
-                        .subscribe {
-                            gameController.setFrameRate(it)
-                            sharedPreferenceHelper.setFrameRate(it)
-                        }
-
-                    compositeDisposable += view.scaleChangeIntent
-                        .subscribe {
-                            view.render(State.ScaleGameView(it))
-                            sharedPreferenceHelper.setScaleValue(it - MainActivity.BASE_SCALE.toInt())
-                        }
-                },
-                {
-                    Timber.w(it, "failed to init default value")
-                }
-            )
     }
 
     fun destroy() {

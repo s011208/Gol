@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.view.globalLayouts
 import com.jakewharton.rxbinding3.view.touches
-import com.jakewharton.rxbinding3.widget.changeEvents
 import com.jakewharton.rxbinding3.widget.changes
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -66,16 +65,6 @@ class MainActivity : AppCompatActivity() {
         initViews()
         initInjections()
         presenter.create()
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        Timber.v("onRestoreInstanceState")
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        Timber.v("onSaveInstanceState")
     }
 
     fun render(state: State) {
