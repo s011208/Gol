@@ -105,4 +105,12 @@ class GameController2 @Inject constructor(conwayRule: ConwayRule) {
             }
         )
     }
+
+    fun clear() {
+        handler.sendMessage(Message.obtain()
+            .also {
+                it.what = MessageHandler.MSG_CLEAR
+            }
+        )
+    }
 }

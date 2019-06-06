@@ -87,6 +87,11 @@ class MainActivityPresenter @Inject constructor(
             .subscribe {
                 gameController.randomAdd()
             }
+
+        compositeDisposable += view.clearIntent
+            .subscribe {
+                gameController.clear()
+            }
     }
 
     fun destroy() {

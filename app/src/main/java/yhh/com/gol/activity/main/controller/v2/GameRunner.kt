@@ -32,6 +32,8 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
 
     private var hasNewPoints = false
 
+    private var clearAll = false
+
     // normal members
     private lateinit var board: Array<IntArray>
 
@@ -91,6 +93,7 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
             val newBoardHeight: Int
             val pause: Boolean
             val hasNewPoints: Boolean
+            val clearAll: Boolean
 
             var totalTime = System.currentTimeMillis()
 
@@ -103,8 +106,10 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                 newBoardWidth = this.newBoardWidth
                 newBoardHeight = this.newBoardHeight
                 pause = this.pause
+                clearAll = this.clearAll
 
-                if (canMergeNewPointList) {
+                if (canMergeNewPointList || clearAll) {
+                    this.clearAll = false
                     this.newPointList.clear()
                     this.canMergeNewPointList = false
                 }
@@ -135,45 +140,55 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
 
                 canvas.setBitmap(boardBitmap)
 
-                // copy new point if need
-                if (canMergeNewPointList) {
-                    newPointList.forEach {
-                        board[it.x][it.y] = 1
-                    }
-                    newPointList.clear()
-                }
-
-                // generate next generation list
-                var gameResult: ArrayList<GamePoint>? = null
-
-                if (remainingFrameTime <= 0) {
-                    gameResult =
-                        if (!pause) {
-                            conwayRule.generateChangedLifeList(board)
-                        } else {
-                            ArrayList()
+                if (!clearAll) {
+                    // copy new point if need
+                    if (canMergeNewPointList) {
+                        newPointList.forEach {
+                            board[it.x][it.y] = 1
                         }
-                    remainingFrameTime = (1000 / frameRate).toLong()
-                }
+                        newPointList.clear()
+                    }
 
-                // draw result
-                if (!gameResult.isNullOrEmpty()) {
-                    hasUpdate = true
-                    gameResult.forEach {
-                        if (it.isAlive) {
+                    // generate next generation list
+                    var gameResult: ArrayList<GamePoint>? = null
+
+                    if (remainingFrameTime <= 0) {
+                        gameResult =
+                            if (!pause) {
+                                conwayRule.generateChangedLifeList(board)
+                            } else {
+                                ArrayList()
+                            }
+                        remainingFrameTime = (1000 / frameRate).toLong()
+                    }
+
+                    // draw result
+                    if (!gameResult.isNullOrEmpty()) {
+                        hasUpdate = true
+                        gameResult.forEach {
+                            if (it.isAlive) {
+                                canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
+                            } else {
+                                canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), diePaint)
+                            }
+                        }
+                    }
+
+                    // draw new live (not merged yet)
+                    if (newPointList.isNotEmpty() && hasNewPoints) {
+                        hasUpdate = true
+                        newPointList.forEach {
                             canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
-                        } else {
-                            canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), diePaint)
                         }
                     }
-                }
-
-                // draw new live (not merged yet)
-                if (newPointList.isNotEmpty() && hasNewPoints) {
+                } else {
                     hasUpdate = true
-                    newPointList.forEach {
-                        canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
+                    for (x in 0 until board.size) {
+                        for (y in 0 until board[x].size) {
+                            board[x][y] = 0
+                        }
                     }
+                    canvas.drawColor(Color.BLACK)
                 }
 
                 canvas.setBitmap(null)
@@ -276,5 +291,11 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                 }
             }
         ).start()
+    }
+
+    fun clear() {
+        synchronized(this) {
+            clearAll = true
+        }
     }
 }

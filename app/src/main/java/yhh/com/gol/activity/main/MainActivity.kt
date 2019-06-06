@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity() {
 
     internal lateinit var randomAddIntent: Observable<Unit>
 
+    internal lateinit var clearIntent: Observable<Unit>
+
     internal val onResumeIntent = PublishSubject.create<Unit>()
 
     internal val onPauseIntent = PublishSubject.create<Unit>()
@@ -137,6 +139,7 @@ class MainActivity : AppCompatActivity() {
         startIntent = start.clicks()
         pauseIntent = pause.clicks()
         randomAddIntent = randomAdd.clicks()
+        clearIntent = clear.clicks()
         frameRateChangeIntent = frameRateSeekBar.changes().skipInitialValue().map { if (it <= 0) 1 else it }
         scaleChangeIntent = scaleSeekBar.changes().skipInitialValue().map { it + BASE_SCALE.toInt() }
     }
