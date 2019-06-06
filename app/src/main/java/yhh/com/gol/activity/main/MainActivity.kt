@@ -24,6 +24,8 @@ import yhh.com.gol.view.GameView
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
+
+
 class MainActivity : AppCompatActivity() {
 
     @field:[Inject]
@@ -130,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         tempViewLayoutIntent = tempView.globalLayouts().map { Pair(tempView.width, tempView.height) }
         startIntent = start.clicks()
         pauseIntent = pause.clicks()
-        seekBarChangeIntent = frameRateSeekBar.changes().skipInitialValue()
+        seekBarChangeIntent = frameRateSeekBar.changes().skipInitialValue().map { if (it <= 0) 1 else it }
     }
 
     private fun initInjections() {

@@ -15,8 +15,7 @@ import javax.inject.Inject
 @PerActivity
 class MainActivityPresenter @Inject constructor(
     private val view: MainActivity,
-//    private val gameController: GameController,
-    private val gameController2: GameController2,
+    private val gameController: GameController2,
     private val model: MainActivityModel
 ) {
 
@@ -34,16 +33,13 @@ class MainActivityPresenter @Inject constructor(
                 gameViewGlobalLayoutDisposable = view.gameViewLayoutIntent
                     .subscribe { pair ->
                         fun initGameController(pair: Pair<Int, Int>) {
-//                            gameController.createGrid(pair.first, pair.second)
-                            gameController2.createBoard(pair.first, pair.second)
+                            gameController.createBoard(pair.first, pair.second)
                             compositeDisposable += view.gameViewTouchIntent
                                 .subscribe { motionEvent ->
                                     if (motionEvent.action == MotionEvent.ACTION_MOVE || motionEvent.action == MotionEvent.ACTION_DOWN) {
-//                                        gameController.addLifeAt(motionEvent.x.toInt(), motionEvent.y.toInt())
-                                        gameController2.addGridPoint(motionEvent.x.toInt(), motionEvent.y.toInt())
+                                        gameController.addGridPoint(motionEvent.x.toInt(), motionEvent.y.toInt())
                                     } else if (motionEvent.action == MotionEvent.ACTION_CANCEL || motionEvent.action == MotionEvent.ACTION_UP) {
-//                                        gameController.mergeLife()
-                                        gameController2.mergeGridPoints()
+                                        gameController.mergeGridPoints()
                                     }
                                 }
                         }
@@ -56,61 +52,63 @@ class MainActivityPresenter @Inject constructor(
                 tempViewGlobalLayoutDisposable = null
             }
 
-        compositeDisposable += gameController2.updateIntent
+        compositeDisposable += gameController.updateIntent
             .subscribe {
                 view.render(State.UpdateGameView(it))
             }
 
         compositeDisposable += view.startIntent
             .subscribe {
-                //                gameController.pause = false
-                gameController2.resume()
+                gameController.resume()
             }
 
         compositeDisposable += view.pauseIntent
             .subscribe {
-                //                gameController.pause = true
-                gameController2.pause()
+                gameController.pause()
             }
 
         compositeDisposable += view.onPauseIntent
             .subscribe {
-                //                gameController.stopRendering()
-                gameController2.sleep()
+                gameController.sleep()
             }
 
         compositeDisposable += view.seekBarChangeIntent
-            .subscribe { gameController2.setFrameRate(it) }
+            .subscribe { gameController.setFrameRate(it) }
 
         compositeDisposable += view.onResumeIntent
             .subscribe {
-                //                gameController.startRendering()
-                gameController2.awake()
+                gameController.awake()
 
-                model.checkDebugView()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { showDebugPanel ->
-                            Timber.v("showDebugPanel: $showDebugPanel")
-                            if (showDebugPanel) {
-                                view.render(State.ShowDebugPanel)
-                            } else {
-                                view.render(State.HideDebugPanel)
+                fun updateDebugViewVisibility() {
+                    model.checkDebugView()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { showDebugPanel ->
+                                Timber.v("showDebugPanel: $showDebugPanel")
+                                if (showDebugPanel) {
+                                    view.render(State.ShowDebugPanel)
+                                } else {
+                                    view.render(State.HideDebugPanel)
+                                }
+                            },
+                            {
+                                Timber.w(it, "failed to check debug panel visibility")
                             }
-                        },
-                        {
-                            Timber.w(it, "failed to check debug panel visibility")
-                        }
-                    )
+                        )
+                }
+
+                updateDebugViewVisibility()
             }
 
-//        compositeDisposable += gameController.debugMessageIntent
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe { view.render(State.UpdateDebugMessage(it)) }
+        compositeDisposable += gameController.logIntent
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { view.render(State.UpdateDebugMessage(it)) }
     }
 
     fun destroy() {
+        gameController.finish()
+
         if (!compositeDisposable.isDisposed) {
             compositeDisposable.dispose()
         }

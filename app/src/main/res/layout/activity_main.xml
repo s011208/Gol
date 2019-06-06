@@ -33,11 +33,33 @@
                 android:text="pause"/>
     </LinearLayout>
 
-    <SeekBar
+    <TextView
+            android:id="@+id/minHint"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:layout_above="@id/bottomMenu"
+            android:gravity="center"
+            android:layout_alignParentStart="true"
+            android:text="@string/activity_main_seek_bar_min"
+            android:layout_width="60dp"
+            android:layout_height="30dp"/>
+
+    <TextView
+            android:id="@+id/maxHint"
+            android:layout_marginStart="16dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:layout_above="@id/bottomMenu"
+            android:gravity="center"
+            android:text="@string/activity_main_seek_bar_max"
+            android:layout_width="60dp"
+            android:layout_height="30dp"/>
+
+    <SeekBar
+            android:layout_toEndOf="@id/minHint"
+            android:layout_toStartOf="@id/maxHint"
+            android:layout_alignTop="@id/minHint"
+            android:layout_alignBottom="@id/minHint"
             android:max="60"
             android:progress="30"
             android:layout_width="match_parent"

@@ -4,8 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import yhh.com.gol.activity.main.controller.v1.ConwayRule
-import yhh.com.gol.activity.main.controller.v1.GamePoint
+import yhh.com.gol.activity.main.controller.ConwayRule
+import yhh.com.gol.activity.main.controller.GamePoint
 
 class ConwayRuleTest {
 

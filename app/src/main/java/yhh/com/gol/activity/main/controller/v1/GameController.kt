@@ -6,8 +6,11 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
+import yhh.com.gol.activity.main.controller.ConwayRule
+import yhh.com.gol.activity.main.controller.GamePoint
 import javax.inject.Inject
 
+@Deprecated("We have v2 :)")
 class GameController @Inject constructor(private val conwayRule: ConwayRule) {
 
     internal val updateIntent = PublishSubject.create<Bitmap>()

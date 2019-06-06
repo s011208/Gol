@@ -1,4 +1,4 @@
-package yhh.com.gol.activity.main.controller.v1
+package yhh.com.gol.activity.main.controller
 
 import androidx.annotation.VisibleForTesting
 import timber.log.Timber

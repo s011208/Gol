@@ -6,4 +6,7 @@
     <string name="activity_settings_item_title_app_version_name">Version name</string>
     <string name="activity_settings_category_title_debug_options">Debug options</string>
     <string name="activity_settings_item_title_show_debug_panel">Show debug panel</string>
+
+    <string name="activity_main_seek_bar_min">Slow</string>
+    <string name="activity_main_seek_bar_max">Fast</string>
 </resources>
