@@ -19,7 +19,7 @@
                 android:layout_alignParentBottom="true"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="60dp">
+                android:layout_height="@dimen/activity_main_controller_size">
 
             <TextView
                     android:ellipsize="end"
@@ -75,7 +75,7 @@
                 android:layout_alignParentStart="true"
                 android:text="@string/activity_main_seek_bar_frame_rate_min"
                 android:layout_width="60dp"
-                android:layout_height="30dp"/>
+                android:layout_height="@dimen/activity_main_controller_size"/>
 
         <TextView
                 android:id="@+id/maxHint"
@@ -86,7 +86,7 @@
                 android:gravity="center"
                 android:text="@string/activity_main_seek_bar_frame_rate_max"
                 android:layout_width="60dp"
-                android:layout_height="30dp"/>
+                android:layout_height="@dimen/activity_main_controller_size"/>
 
         <SeekBar
                 android:layout_toEndOf="@id/minHint"
@@ -94,7 +94,7 @@
                 android:max="60"
                 android:progress="30"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="@dimen/activity_main_controller_size"
                 android:id="@+id/frameRateSeekBar"
                 android:layout_above="@id/bottomMenu"/>
 
@@ -107,7 +107,7 @@
                 android:layout_alignParentStart="true"
                 android:text="@string/activity_main_seek_bar_scale_min"
                 android:layout_width="60dp"
-                android:layout_height="30dp"/>
+                android:layout_height="@dimen/activity_main_controller_size"/>
 
         <TextView
                 android:id="@+id/maxScale"
@@ -118,7 +118,7 @@
                 android:gravity="center"
                 android:text="@string/activity_main_seek_bar_scale_max"
                 android:layout_width="60dp"
-                android:layout_height="30dp"/>
+                android:layout_height="@dimen/activity_main_controller_size"/>
 
         <SeekBar
                 android:layout_toEndOf="@id/minScale"
@@ -126,7 +126,7 @@
                 android:max="21"
                 android:progress="0"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="@dimen/activity_main_controller_size"
                 android:id="@+id/scaleSeekBar"
                 android:layout_above="@id/frameRateSeekBar"/>
     </RelativeLayout>
