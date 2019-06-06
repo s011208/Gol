@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.view.globalLayouts
 import com.jakewharton.rxbinding3.view.touches
+import com.jakewharton.rxbinding3.widget.changeEvents
 import com.jakewharton.rxbinding3.widget.changes
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -26,7 +27,7 @@ import kotlin.math.roundToInt
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val BASE_SCALE = 4f
+        const val BASE_SCALE = 4f
     }
 
     @field:[Inject]
@@ -67,8 +68,25 @@ class MainActivity : AppCompatActivity() {
         presenter.create()
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Timber.v("onRestoreInstanceState")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        Timber.v("onSaveInstanceState")
+    }
+
     fun render(state: State) {
         when (state) {
+            is State.UpdateDefaultValue -> {
+                frameRateSeekBar.progress = state.frameRate
+                scaleSeekBar.progress = state.scaleSize
+
+                frameRateChangeIntent = frameRateSeekBar.changes().map { if (it <= 0) 1 else it }
+                scaleChangeIntent = scaleSeekBar.changes().map { it + BASE_SCALE.toInt() }
+            }
             is State.ScaleGameView -> {
                 gameView?.apply {
                     scaleX = state.scale.toFloat()
@@ -116,10 +134,6 @@ class MainActivity : AppCompatActivity() {
 
                     gameViewTouchIntent =
                         touches()
-//                            .filter {
-//                                if (it.action == MotionEvent.ACTION_MOVE) return@filter it.x >= x && it.x <= x + width && it.y >= y && it.y <= y + height
-//                                else return@filter true
-//                            }
                             .filter {
                                 if (it.action == MotionEvent.ACTION_MOVE) return@filter it.x >= 0 && it.x <= width && it.y >= 0 && it.y <= height
                                 else return@filter true
@@ -134,14 +148,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun initViews() {
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window?.statusBarColor = Color.BLACK
 
         tempViewLayoutIntent = tempView.globalLayouts().map { Pair(tempView.width, tempView.height) }
         startIntent = start.clicks()
         pauseIntent = pause.clicks()
         randomAddIntent = randomAdd.clicks()
         clearIntent = clear.clicks()
-        frameRateChangeIntent = frameRateSeekBar.changes().skipInitialValue().map { if (it <= 0) 1 else it }
-        scaleChangeIntent = scaleSeekBar.changes().skipInitialValue().map { it + BASE_SCALE.toInt() }
     }
 
     private fun initInjections() {

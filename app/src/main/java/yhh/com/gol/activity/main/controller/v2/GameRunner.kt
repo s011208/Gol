@@ -80,11 +80,6 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                 Timber.tag(TAG_LOCK).i("Finish game")
                 break@loop
             }
-            if (!updateIntent.hasObservers()) {
-                Timber.v("updateIntent.hasObservers(): ${updateIntent.hasObservers()}, ignore")
-                sleep(1000L)
-                continue
-            }
 
             val newPointList = ArrayList<Point>()
             val frameRate: Int
