@@ -90,7 +90,7 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
             val newBoardWidth: Int
             val newBoardHeight: Int
             val pause: Boolean
-            val hasNewPoint: Boolean
+            val hasNewPoints: Boolean
 
             var totalTime = System.currentTimeMillis()
 
@@ -113,7 +113,7 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                     remainingFrameTime = 0L
                 }
                 previousFrameRate = frameRate
-                hasNewPoint = this.hasNewPoints
+                hasNewPoints = this.hasNewPoints
                 this.hasNewPoints = false
             }
 
@@ -169,7 +169,7 @@ class GameRunner(private val conwayRule: ConwayRule) : Thread() {
                 }
 
                 // draw new live (not merged yet)
-                if (newPointList.isNotEmpty() && hasNewPoint) {
+                if (newPointList.isNotEmpty() && hasNewPoints) {
                     hasUpdate = true
                     newPointList.forEach {
                         canvas.drawPoint(it.x.toFloat(), it.y.toFloat(), livePaint)
