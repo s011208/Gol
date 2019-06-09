@@ -27,6 +27,8 @@ class MainActivityPresenter @Inject constructor(
 
     private var tempViewGlobalLayoutDisposable: Disposable? = null
 
+    private var isPause = false
+
     fun create() {
         tempViewGlobalLayoutDisposable = view.tempViewLayoutIntent
             .subscribe {
@@ -87,14 +89,17 @@ class MainActivityPresenter @Inject constructor(
                 view.render(State.UpdateGameView(it))
             }
 
-        compositeDisposable += view.startIntent
+        compositeDisposable += view.controlIntent
             .subscribe {
-                gameController.resume()
-            }
-
-        compositeDisposable += view.pauseIntent
-            .subscribe {
-                gameController.pause()
+                isPause = if (isPause) {
+                    gameController.resume()
+                    view.render(State.SwitchToPause)
+                    false
+                } else {
+                    gameController.pause()
+                    view.render(State.SwitchToStart)
+                    true
+                }
             }
 
         compositeDisposable += view.onPauseIntent

@@ -45,9 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     internal lateinit var gameViewLayoutIntent: Observable<Pair<Int, Int>>
 
-    internal lateinit var startIntent: Observable<Unit>
-
-    internal lateinit var pauseIntent: Observable<Unit>
+    internal lateinit var controlIntent: Observable<Unit>
 
     internal lateinit var randomAddIntent: Observable<Unit>
 
@@ -75,6 +73,12 @@ class MainActivity : AppCompatActivity() {
 
                 frameRateChangeIntent = frameRateSeekBar.changes().map { if (it <= 0) 1 else it }
                 scaleChangeIntent = scaleSeekBar.changes().map { it + BASE_SCALE.toInt() }
+            }
+            is State.SwitchToStart -> {
+                controller.text = resources.getText(R.string.activity_main_start)
+            }
+            is State.SwitchToPause -> {
+                controller.text = resources.getText(R.string.activity_main_pause)
             }
             is State.ScaleGameView -> {
                 gameView?.apply {
@@ -140,8 +144,7 @@ class MainActivity : AppCompatActivity() {
         window?.statusBarColor = Color.BLACK
 
         tempViewLayoutIntent = tempView.globalLayouts().map { Pair(tempView.width, tempView.height) }
-        startIntent = start.clicks()
-        pauseIntent = pause.clicks()
+        controlIntent = controller.clicks()
         randomAddIntent = randomAdd.clicks()
         clearIntent = clear.clicks()
     }

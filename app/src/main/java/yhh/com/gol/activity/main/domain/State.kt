@@ -10,4 +10,8 @@ sealed class State {
     data class ScaleGameView(val scale: Int) : State()
 
     data class UpdateDefaultValue(val frameRate: Int, val scaleSize: Int) : State()
+
+    object SwitchToStart : State()
+
+    object SwitchToPause : State()
 }
