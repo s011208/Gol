@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "591624507209",
+    "firebase_url": "https://game-of-life-bee6a.firebaseio.com",
+    "project_id": "game-of-life-bee6a",
+    "storage_bucket": "game-of-life-bee6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591624507209:android:9ffa22cf174aa298",
+        "android_client_info": {
+          "package_name": "yhh.com.gol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591624507209-unljk096qbrefdekl8mnu2bbuf5c9p5r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "yhh.com.gol",
+            "certificate_hash": "5fd5b841d1f22fa47e8aa1564f9ac8cc9d4ee923"
+          }
+        },
+        {
+          "client_id": "591624507209-i27385011745qgafl8rmf394lf5sp5cs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCymySSWPmCaZCPJ4xtggH_NvUW-VECXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591624507209-i27385011745qgafl8rmf394lf5sp5cs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

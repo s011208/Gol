@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Gol</string>
+
+    <string name="activity_settings_category_title_app_info">App info</string>
+    <string name="activity_settings_item_title_app_version_code">Version code</string>
+    <string name="activity_settings_item_title_app_version_name">Version name</string>
+    <string name="activity_settings_category_title_debug_options">Debug options</string>
+
+    <string name="activity_main_seek_bar_frame_rate_min">Slow</string>
+    <string name="activity_main_seek_bar_frame_rate_max">Fast</string>
+    <string name="activity_main_seek_bar_scale_min">Small</string>
+    <string name="activity_main_seek_bar_scale_max">Large</string>
+    <string name="activity_main_start">Start</string>
+    <string name="activity_main_pause">Pause</string>
+    <string name="activity_main_random">Random</string>
+    <string name="activity_main_clear">Clear</string>
+</resources>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.main.MainActivity">
+
+    <RelativeLayout
+            android:id="@+id/controlPanel"
+            android:background="#fff"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="120dp">
+
+        <LinearLayout
+                android:id="@+id/bottomMenu"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_main_controller_size">
+
+            <TextView
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:background="?selectableItemBackground"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:id="@+id/start"
+                    android:text="@string/activity_main_start"/>
+
+            <TextView
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:background="?selectableItemBackground"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/pause"
+                    android:text="@string/activity_main_pause"/>
+
+            <TextView
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:background="?selectableItemBackground"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/randomAdd"
+                    android:text="@string/activity_main_random"/>
+
+            <TextView
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:background="?selectableItemBackground"
+                    android:layout_width="0dp"
+                    android:gravity="center"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/clear"
+                    android:text="@string/activity_main_clear"/>
+        </LinearLayout>
+
+        <TextView
+                android:id="@+id/minHint"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_above="@id/bottomMenu"
+                android:gravity="center"
+                android:layout_alignParentStart="true"
+                android:text="@string/activity_main_seek_bar_frame_rate_min"
+                android:layout_width="60dp"
+                android:layout_height="@dimen/activity_main_controller_size"/>
+
+        <TextView
+                android:id="@+id/maxHint"
+                android:layout_marginStart="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:layout_above="@id/bottomMenu"
+                android:gravity="center"
+                android:text="@string/activity_main_seek_bar_frame_rate_max"
+                android:layout_width="60dp"
+                android:layout_height="@dimen/activity_main_controller_size"/>
+
+        <SeekBar
+                android:layout_toEndOf="@id/minHint"
+                android:layout_toStartOf="@id/maxHint"
+                android:max="60"
+                android:progress="30"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_main_controller_size"
+                android:id="@+id/frameRateSeekBar"
+                android:layout_above="@id/bottomMenu"/>
+
+        <TextView
+                android:id="@+id/minScale"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_above="@id/frameRateSeekBar"
+                android:gravity="center"
+                android:layout_alignParentStart="true"
+                android:text="@string/activity_main_seek_bar_scale_min"
+                android:layout_width="60dp"
+                android:layout_height="@dimen/activity_main_controller_size"/>
+
+        <TextView
+                android:id="@+id/maxScale"
+                android:layout_marginStart="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="16dp"
+                android:layout_above="@id/frameRateSeekBar"
+                android:gravity="center"
+                android:text="@string/activity_main_seek_bar_scale_max"
+                android:layout_width="60dp"
+                android:layout_height="@dimen/activity_main_controller_size"/>
+
+        <SeekBar
+                android:layout_toEndOf="@id/minScale"
+                android:layout_toStartOf="@id/maxScale"
+                android:max="21"
+                android:progress="0"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_main_controller_size"
+                android:id="@+id/scaleSeekBar"
+                android:layout_above="@id/frameRateSeekBar"/>
+    </RelativeLayout>
+
+    <View
+            android:id="@+id/tempView"
+            android:layout_above="@id/controlPanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+</RelativeLayout>
