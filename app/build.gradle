@@ -24,6 +24,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -62,6 +65,12 @@ dependencies {
     // firebase
     implementation 'com.google.firebase:firebase-core:16.0.9'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
+    // robolectric
+    testImplementation "org.robolectric:robolectric:4.2"
+
+    // mockk
+    testImplementation "io.mockk:mockk:1.9.3"
 }
 
 apply plugin: 'com.google.gms.google-services'

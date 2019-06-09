@@ -1,6 +1,7 @@
 package yhh.com.gol.activity.main
 
 import android.view.MotionEvent
+import androidx.annotation.VisibleForTesting
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -27,7 +28,8 @@ class MainActivityPresenter @Inject constructor(
 
     private var tempViewGlobalLayoutDisposable: Disposable? = null
 
-    private var isPause = false
+    @VisibleForTesting
+    internal var isPause = false
 
     fun create() {
         tempViewGlobalLayoutDisposable = view.tempViewLayoutIntent
