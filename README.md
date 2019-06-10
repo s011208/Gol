@@ -7,7 +7,7 @@ Simple demo of Game of Life
 
 ## Download
 ```
-git clone git@github.com:TinkLabs/handy-launcher2-android.git
+git clone git@github.com:yenhsun/Gol.git
 ```
 
 ## Idea
