@@ -29,7 +29,7 @@ Under this MVP-like structure, testing can be easily because of following reason
 
 ### Others
 
-In case of blocking any UI manipulations, I decided to use `HandlerThread` to send all commands, from presenter, to `GameRunner`, the main GOL calculator and both are running in distinct the background threads.
+In case of blocking any UI manipulations, I decided to use `HandlerThread` to send all commands, from presenter, to `GameRunner`, the main GOL calculator and both are running on the distinct background threads.
 
 # [Containing 7s]
 
